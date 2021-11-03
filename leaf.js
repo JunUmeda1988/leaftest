@@ -73,8 +73,11 @@
 
     function translatePoint(pt, dist, heading) {
 
+        
         var reductor = function (dist) {
-            return dist / Math.pow(2, 18 - Window.map.getZoom())
+          var el = $(window.map).data("leafletMap");
+          var zoom = el ? el.getZoom() : 18;
+          return dist / Math.pow(2, 18 - zoom);
         };
 
         return {
@@ -204,8 +207,7 @@
 
                 // Offset management hack ---
                 if (this.options.offset) {
-                    ring = L.PolylineOffset.offsetPoints(ring, this.options.offset);
-                    
+                    ring = L.PolylineOffset.offsetPoints(ring, this.options);
                 }
                 // Offset management hack END ---
 
