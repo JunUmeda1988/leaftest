@@ -116,12 +116,17 @@
 
 
 
-        offsetPoints: function(pts, options) {
-            var offsetSegments = this.offsetPointLine(L.LineUtil.simplify(pts, options.smoothFactor), options.offset);
-            return this.joinLineSegments(offsetSegments, options.offset);
+        // offsetPoints: function(pts, options) {
+        //     var offsetSegments = this.offsetPointLine(L.LineUtil.simplify(pts, options.smoothFactor), options.offset);
+        //     return this.joinLineSegments(offsetSegments, options.offset);
+        // },
+
+
+        offsetPoints: function(pts, offset) {
+            var offsetSegments = this.offsetPointLine(pts, offset);
+            return this.joinLineSegments(offsetSegments, offset);
         },
-
-
+    
 
 
 
