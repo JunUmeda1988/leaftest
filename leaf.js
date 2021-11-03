@@ -17,10 +17,10 @@ function forEachPair(list, callback) {
 }
 
 /**
- Find the coefficients (a,b) of a line of equation y = a.x + b,
- or the constant x for vertical lines
- Return null if there's no equation possible
- */
+Find the coefficients (a,b) of a line of equation y = a.x + b,
+or the constant x for vertical lines
+Return null if there's no equation possible
+*/
 function lineEquation(pt1, pt2) {
     if (pt1.x === pt2.x) {
         return pt1.y === pt2.y ? null : { x: pt1.x };
@@ -34,9 +34,9 @@ function lineEquation(pt1, pt2) {
 }
 
 /**
- Return the intersection point of two lines defined by two points each
- Return null when there's no unique intersection
- */
+Return the intersection point of two lines defined by two points each
+Return null when there's no unique intersection
+*/
 function intersection(l1a, l1b, l2a, l2b) {
     var line1 = lineEquation(l1a, l1b);
     var line2 = lineEquation(l2a, l2b);
@@ -52,6 +52,9 @@ function intersection(l1a, l1b, l2a, l2b) {
                 x: line1.x,
                 y: line2.a * line1.x + line2.b,
             };
+
+
+
     }
     if (line2.hasOwnProperty('x')) {
         return {
@@ -73,17 +76,15 @@ function intersection(l1a, l1b, l2a, l2b) {
 
 function translatePoint(pt, dist, heading) {
 
-
     var reductor = function (dist) {
-      var el = $(window.map).data("leafletMap");
-      var zoom = el ? el.getZoom() : 18;
-      return dist / Math.pow(2, 18 - zoom);
+        return dist / Math.pow(2, 18 - Window.map.getZoom())
     };
 
     return {
         x: pt.x + reductor(dist) * Math.cos(heading),
         y: pt.y + reductor(dist) * Math.sin(heading),
     };
+
 }
 
 var PolylineOffset = {
@@ -110,14 +111,14 @@ var PolylineOffset = {
         return offsetSegments;
     },
 
-    offsetPoints: function(pts, options) {
-        var offsetSegments = this.offsetPointLine(L.LineUtil.simplify(pts, options.smoothFactor), options.offset);
-        return this.joinLineSegments(offsetSegments, options.offset);
+    offsetPoints: function(pts, offset) {
+        var offsetSegments = this.offsetPointLine(pts, offset);
+        return this.joinLineSegments(offsetSegments, offset);
     },
 
     /**
-     Join 2 line segments defined by 2 points each with a circular arc
-     */
+    Join 2 line segments defined by 2 points each with a circular arc
+    */
     joinSegments: function(s1, s2, offset) {
         // TODO: different join styles
         return this.circularArc(s1, s2, offset)
@@ -154,8 +155,8 @@ var PolylineOffset = {
     },
 
     /**
-     Interpolates points between two offset segments in a circular form
-     */
+    Interpolates points between two offset segments in a circular form
+    */
     circularArc: function(s1, s2, distance) {
         // if the segments are the same angle,
         // there should be a single join point
@@ -188,8 +189,24 @@ var PolylineOffset = {
         points.push(translatePoint(center, distance, endAngle));
 
         return rightOffset ? points.reverse() : points;
-    }
+    },
+
+
+
+//     getMetersPerPixel: function(map) {
+//         var centerLatLng = map.getCenter(); // get map center
+//         var pointC = map.latLngToContainerPoint(centerLatLng); // convert to containerpoint (pixels)
+//         var pointX = L.point(pointC.x + 10, pointC.y); // add 10 pixels to x
+
+//         // convert containerpoints to latlng's
+//         var latLngX = map.containerPointToLatLng(pointX);
+//         return centerLatLng.distanceTo(latLngX) / 10; // calculate distance between c and x (latitude)
+//     }
 }
+
+
+
+
 
 // Modify the L.Polyline class by overwriting the projection function
 L.Polyline.include({
@@ -207,13 +224,13 @@ L.Polyline.include({
 
             // Offset management hack ---
             if (this.options.offset) {
-                ring = L.PolylineOffset.offsetPoints(ring, this.options);
+                ring = L.PolylineOffset.offsetPoints(ring, this.options.offset);
             }
             // Offset management hack END ---
 
             result.push(ring.map(function (xy) {
-                return L.point(xy.x, xy.y);
-            }));
+                    return L.point(xy.x, xy.y);
+                }));
         } else {
             latlngs.forEach(L.bind(function(ll) {
                 this._projectLatlngs(ll, result, projectedBounds);
