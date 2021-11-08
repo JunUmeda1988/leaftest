@@ -224,7 +224,7 @@ L.Polyline.include({
 
             // Offset management hack ---
             if (this.options.offset) {
-                ring = L.PolylineOffset.offsetPoints(ring, this.options.offset);
+                ring = L.PolylineOffset.offsetPoints(ring, this.options);
             }
             // Offset management hack END ---
 
